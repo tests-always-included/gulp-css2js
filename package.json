@@ -1,0 +1,37 @@
+{
+    "name": "gulp-css2js",
+    "version": "1.0.0",
+    "description": "Convert CSS into JavaScript.  Works with buffers and streams.",
+    "author": "Tyler Akins <fidian@rumkin.com>",
+    "homepage": "https://github.com/tests-always-included/gulp-css2js",
+    "bugs": {
+        "url": "https://github.com/tests-always-included/gulp-css2js/issues"
+    },
+    "contributors": [
+        "Tyler Akins <fidian@rumkin.com> (http://rumkin.com)"
+    ],
+    "main": "gulp-css2js.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/tests-always-included/gulp-css2js.git"
+    },
+    "keywords": [
+        "gulpplugin",
+        "css2js"
+    ],
+    "dependencies": {
+        "gulp-util": "*",
+        "through2": "*"
+    },
+    "devDependencies": {
+        "mocha": "*"
+    },
+    "license": "MIT",
+    "engines": {
+        "node": ">=0.8",
+        "npm": ">=1.0"
+    },
+    "scripts": {
+        "test": "mocha"
+    }
+}
