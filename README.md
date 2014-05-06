@@ -108,5 +108,5 @@ This software is released under an MIT licence with an additional non-advertisin
 [gulp]: https://github.com/wearefractal/gulp
 [NPM]: https://npmjs.org/package/gulp-css2js
 [npm-image]: https://nodei.co/npm/gulp-css2js.png?downloads=true&stars=true
-[Travis CI]: http://travis-ci.org/tests-always-included/gulp-css2js
+[Travis CI]: http://travis-ci.org/tests-always-included/gulp-css2js?branch=master
 [travis-image]: https://secure.travis-ci.org/tests-always-included/gulp-css2js.png
