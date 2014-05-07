@@ -167,7 +167,8 @@
                 file.path = gulpUtil.replaceExtension(file.path, ".js");
             } else if (!file.isNull()) {
                 // Not sure what this could be, but future-proofing the code.
-                throw new gulpUtil.PluginError('gulp-css2js', 'Unhandled file source type.');
+                this.emit('error', new gulpUtil.PluginError('gulp-css2js', 'Unhandled file source type.'));
+                return callback();
             }
 
             this.push(file);
