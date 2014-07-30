@@ -13,15 +13,42 @@
 (function () {
     'use strict';
 
-    var gulpUtil, prefixBuffer, suffixBuffer, through2;
+    var defaultOptions, gulpUtil, through2;
 
     /**
      * @typedef {Object} gulpCss2js~options
      * @property {string} remainder Leftover newlines from last write
+     * @property {string} [prefix]
      * @property {boolean} [splitOnNewline=true]
+     * @property {string} [suffix]
      * @property {boolean} [trimSpacesBeforeNewline=true]
      * @property {boolean} [trimTrailingNewline=false]
      */
+
+    /**
+     * Get an options object
+     *
+     * @param {?Object} options
+     * @return {gulpCss2js~options}
+     */
+    function getOptions(options) {
+        var result;
+
+        options = options || {};
+        result = {
+            remainder: '',
+            remainderEncoding: 'utf8'
+        };
+        Object.keys(defaultOptions).forEach(function (key) {
+            if (options[key] === undefined) {
+                result[key] = defaultOptions[key];
+            } else {
+                result[key] = options[key];
+            }
+        });
+
+        return result;
+    }
 
     /**
      * Escapes content to be used in the middle of a JavaScript string.
@@ -29,12 +56,12 @@
      * is important because we need to escape double quotes in the buffers.
      *
      * @param {Buffer} bufferIn
+     * @param {string} encoding
      * @param {gulpCss2js~options} options
-     * @param {boolean} trimTrailingNewlineDefault
      * @return {Buffer}
      */
     function escapeBuffer(bufferIn, encoding, options) {
-        var newlines, str;
+        var lastLine, str;
 
         try {
             str = bufferIn.toString(encoding);
@@ -66,20 +93,19 @@
             str = str.replace(/[\t ]*\n/g, '\n');
         }
 
-        // Trim the last newline or convert it so it is preserved properly
-        if (options.trimTrailingNewline) {
-            newlines = str.match(/\n*$/);
+        /* We grab the last line of content and all following newlines
+         * and put it into options.remainder.  This is necessary for
+         * processing streams.
+         */
+        lastLine = str.match(/[^\n]+\n*$/);
+        options.remainderEncoding = encoding;
 
-            if (newlines && newlines[0]) {
-                options.remainder = newlines[0];
-                str = str.replace(/\n*$/, '');
-            }
+        if (lastLine && lastLine[0]) {
+            options.remainder = lastLine[0];
+            str = str.replace(/[^\n]+\n*$/, '');
         } else {
-            /* Prevent the last line from looking like this when encoded:
-             *    ".css { display: block }\n" +
-             *    ""
-             */
-            str = str.replace(/\n$/, '\\n');
+            options.remainder = str;
+            str = '';
         }
 
         // Break on newlines
@@ -90,6 +116,37 @@
         }
 
         return new Buffer(str, encoding);
+    }
+
+    function getRemainder(options) {
+        var newlines, str;
+
+        str = options.remainder;
+        options.remainder = '';
+
+        // Trim the last newlines
+        if (options.trimTrailingNewline) {
+            newlines = str.match(/\n*$/);
+
+            if (newlines && newlines[0]) {
+                options.remainder = newlines[0];
+                str = str.replace(/\n*$/, '');
+            }
+        }
+
+        // Break on newlines
+        if (options.splitOnNewline) {
+            /* Prevent the last line from looking like this when encoded:
+             *    ".css { display: block }\n" +
+             *    ""
+             */
+            str = str.replace(/\n$/, '\\n');
+            str = str.replace(/\n/g, '\\n" +\n"');
+        } else {
+            str = str.replace(/\n/g, '\\n');
+        }
+
+        return new Buffer(str, options.remainderEncoding);
     }
 
     /**
@@ -106,60 +163,28 @@
             this.push(escapeBuffer(chunk, encoding, options));
             callback();
         }, function (callback) {
-            this.push(suffixBuffer);
+            this.push(getRemainder(options));
+            this.push(new Buffer(options.suffix, 'utf8'));
             callback();
         });
-        outStream.push(prefixBuffer);
+        outStream.push(new Buffer(options.prefix, 'utf8'));
 
         return outStream;
     }
 
     gulpUtil = require('gulp-util');
     through2 = require('through2');
-    prefixBuffer = new Buffer('(function (doc, cssText) {\n' +
-        '    var styleEl = doc.createElement("style");\n' +
-        '    doc.getElementsByTagName("head")[0].appendChild(styleEl);\n' +
-        '    if (styleEl.styleSheet) {\n' +
-        '        if (!styleEl.styleSheet.disabled) {\n' +
-        '            styleEl.styleSheet.cssText = cssText;\n' +
-        '        }\n' +
-        '    } else {\n' +
-        '        try {\n' +
-        '            styleEl.innerHTML = cssText;\n' +
-        '        } catch (ignore) {\n' +
-        '            styleEl.innerText = cssText;\n' +
-        '        }\n' +
-        '    }\n' +
-        '}(document, "', 'utf8');
-    suffixBuffer = new Buffer('"));\n', 'utf8');
 
     module.exports = function (options) {
-        /**
-         * Default a parameter
-         *
-         * @param {string} key
-         * @param {*} fallbackValue Value to use if current is undefined
-         * @return {*}
-         */
-        function fallback(key, fallbackValue) {
-            if (options[key] === undefined) {
-                options[key] = fallbackValue;
-            }
-        }
-
-
-        options = options || {};
-        options.remainder = '';
-        fallback('splitOnNewline', true);
-        fallback('trimSpacesBeforeNewline', true);
-        fallback('trimTrailingNewline', true);
+        options = getOptions(options);
 
         return through2.obj(function (file, encoding, callback) {
             if (file.isBuffer()) {
                 file.contents = Buffer.concat([
-                    prefixBuffer,
+                    new Buffer(options.prefix, 'utf8'),
                     escapeBuffer(file.contents, encoding, options),
-                    suffixBuffer
+                    getRemainder(options),
+                    new Buffer(options.suffix, 'utf8')
                 ]);
                 file.path = gulpUtil.replaceExtension(file.path, ".js");
             } else if (file.isStream()) {
@@ -176,7 +201,25 @@
         });
     };
 
-    // Export these too for easier testing
-    module.exports.prefixBuffer = prefixBuffer;
-    module.exports.suffixBuffer = suffixBuffer;
+    module.exports.defaultOptions = defaultOptions = {
+        prefix: '(function (doc, cssText) {\n' +
+            '    var styleEl = doc.createElement("style");\n' +
+            '    doc.getElementsByTagName("head")[0].appendChild(styleEl);\n' +
+            '    if (styleEl.styleSheet) {\n' +
+            '        if (!styleEl.styleSheet.disabled) {\n' +
+            '            styleEl.styleSheet.cssText = cssText;\n' +
+            '        }\n' +
+            '    } else {\n' +
+            '        try {\n' +
+            '            styleEl.innerHTML = cssText;\n' +
+            '        } catch (ignore) {\n' +
+            '            styleEl.innerText = cssText;\n' +
+            '        }\n' +
+            '    }\n' +
+            '}(document, "',
+        splitOnNewline: true,
+        suffix: '"));\n',
+        trimSpacesBeforeNewline: true,
+        trimTrailingNewline: true
+    };
 }());

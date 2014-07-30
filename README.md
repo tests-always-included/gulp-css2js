@@ -78,6 +78,24 @@ You would likely extend this a bit more and make sure this stream ends up as a m
 Using this technique, your CSS is now a single minified JavaScript file.  You can concatenate it with the rest of your JavaScript to bundle an entire Angular application as a single file download, or provide default styles with any JavaScript library that you are distributing.
 
 
+How It Works
+------------
+
+CSS is simply wrapped in JavaScript code that creates a `<style>` element and adds the CSS text within that DOM node.
+
+Need it to change so CSS is wrapped into a variable?  You can specify the prefix and suffix yourself!  The example below only illustrates how to set those particular options.
+
+```javascript
+// Just showing how to use `prefix` and `suffix`
+gulp.src("./lib/css/**/*.css")
+    .pipe(css2js({
+        prefix: "var cssText = \"",
+        suffix: "\";\n";
+    }))
+    .pipe(gulp.dest("./dist/javascript/"));
+```
+
+
 API
 ---
 
@@ -87,7 +105,11 @@ This creates a pipe through which all text is assumed to be CSS and will be wrap
 
 `options` is an object with the following possible properties:
 
+* `prefix` - The string that should be added before the CSS.  By default it is set up to add a DOM `<script>` node with the CSS inserted as the text.  See also `suffix`.
+
 * `splitOnNewline` (default: *true*) - When enabled, the resulting JavaScript will have each line of CSS on its own line.  This may help you in reading the resulting code.
+
+* `suffix` - The string that should be added after the CSS.  By default it is set up to add a DOM `<script>` node with the CSS inserted as the text.  See also `prefix`.
 
 * `trimSpacesBeforeNewline` (default: *true*) - Spaces at the end of a line have no use and can usually be safely eliminated.  One could also minify the CSS before passing it to css2js in order to eliminate these spaces as well.
 
