@@ -184,6 +184,21 @@ describe('gulp-css2js', function () {
                 }, done);
             });
         });
+        describe('prefix and suffix', function () {
+            var input, output, prefix, suffix;
+
+            input = 'div { display: block }';
+            output = 'var a = "div { display: block }";';
+            prefix = 'var a = "';
+            suffix = '";';
+
+            it('is true', function (done) {
+                runThroughStream(makeFile(output, 'test/styles/testing.js'), makeFile(input), {
+                    prefix: prefix,
+                    suffix: suffix
+                }, done);
+            });
+        });
     });
     describe('escaping', function () {
         it('escapes as necessary', function (done) {
