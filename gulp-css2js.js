@@ -154,12 +154,15 @@
         fallback('trimSpacesBeforeNewline', true);
         fallback('trimTrailingNewline', true);
 
+        var curPrefixBuffer = options.prefix ? new Buffer(options.prefix, 'utf8') : prefixBuffer;
+        var curSuffixBuffer = options.suffix ? new Buffer(options.suffix, 'utf8') : suffixBuffer;
+
         return through2.obj(function (file, encoding, callback) {
             if (file.isBuffer()) {
                 file.contents = Buffer.concat([
-                    prefixBuffer,
+                    curPrefixBuffer,
                     escapeBuffer(file.contents, encoding, options),
-                    suffixBuffer
+                    curSuffixBuffer
                 ]);
                 file.path = gulpUtil.replaceExtension(file.path, ".js");
             } else if (file.isStream()) {
