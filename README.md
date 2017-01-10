@@ -5,10 +5,10 @@ Ever wish you could distribute everything you needed as a single JavaScript file
 
 This [gulp] plugin lets you do exactly that.  It's extremely similar to the [grunt-css2js] task.  It works on buffers and on streams, so you are able to utilize it outside of [gulp] as well.  The code is supposed to be very readable and should be a candidate for use as an example when coding other plugins.
 
-[![NPM][npm-image]][NPM]
-[![Build Status][travis-image]][Travis CI]
-[![Dependencies][dependencies-image]][Dependencies]
-[![Dev Dependencies][devdependencies-image]][Dev Dependencies]
+[![npm version][npm-badge]][npm-link]
+[![Build Status][travis-badge]][travis-link]
+[![Dependencies][dependencies-badge]][dependencies-link]
+[![Dev Dependencies][devdependencies-badge]][devdependencies-link]
 
 
 Usage
@@ -119,16 +119,19 @@ This creates a pipe through which all text is assumed to be CSS and will be wrap
 License
 -------
 
-This software is released under an MIT licence with an additional non-advertising clause.  See [LICENSE.md](LICENSE.md) for full details.
+This software is released under an [MIT Licence][LICENSE] with an additional non-advertising clause.
 
 
-[Dependencies]: https://david-dm.org/tests-always-included/gulp-css2js
-[dependencies-image]: https://david-dm.org/tests-always-included/gulp-css2js.png
-[Dev Dependencies]: https://david-dm.org/tests-always-included/gulp-css2js#info=devDependencies
-[devdependencies-image]: https://david-dm.org/tests-always-included/gulp-css2js/dev-status.png
+[codecov-badge]: https://img.shields.io/codecov/c/github/tests-always-included/gulp-css2js/master.svg
+[codecov-link]: https://codecov.io/github/tests-always-included/gulp-css2js?branch=master
+[dependencies-badge]: https://img.shields.io/david/tests-always-included/gulp-css2js.svg
+[dependencies-link]: https://david-dm.org/tests-always-included/gulp-css2js
+[devdependencies-badge]: https://img.shields.io/david/dev/tests-always-included/gulp-css2js.svg
+[devdependencies-link]: https://david-dm.org/tests-always-included/gulp-css2js#info=devDependencies
 [grunt-css2js]: https://github.com/ragiragi/grunt-css2js
 [gulp]: https://github.com/wearefractal/gulp
-[NPM]: https://npmjs.org/package/gulp-css2js
-[npm-image]: https://nodei.co/npm/gulp-css2js.png?downloads=true&stars=true
-[Travis CI]: http://travis-ci.org/tests-always-included/gulp-css2js?branch=master
-[travis-image]: https://secure.travis-ci.org/tests-always-included/gulp-css2js.png
+[LICENSE]: LICENSE.md
+[npm-badge]: https://img.shields.io/npm/v/gulp-css2js.svg
+[npm-link]: https://npmjs.org/package/gulp-css2js
+[travis-badge]: https://img.shields.io/travis/tests-always-included/gulp-css2js/master.svg
+[travis-link]: http://travis-ci.org/tests-always-included/gulp-css2js
