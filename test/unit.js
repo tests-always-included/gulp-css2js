@@ -6,13 +6,16 @@
 
 'use strict';
 
-var Assert, css2js, defaultOptions, gulpUtil, stream;
+var Assert, css2js, defaultOptions, gulpUtil, stream, slash;
 
 Assert = require('assert');
 css2js = require('../');
 defaultOptions = JSON.parse(JSON.stringify(css2js.defaultOptions));
 gulpUtil = require('gulp-util');
 stream = require('stream');
+// The 'slash' package is used to normalize paths in respect to OS/environment...
+//   e.g. change '.\\foo\\bar' (Windows path) to the expected './foo/bar' (*nix path)
+slash = require('slash');
 
 function runThroughStream(expected, srcFile, options, done) {
     var stream;
@@ -21,9 +24,9 @@ function runThroughStream(expected, srcFile, options, done) {
     stream.on("data", function (newFile) {
         var buffer;
 
-        Assert.equal(newFile.path, expected.path);
-        Assert.equal(newFile.cwd, expected.cwd);
-        Assert.equal(newFile.base, expected.base);
+        Assert.equal(slash(newFile.path), expected.path);
+        Assert.equal(slash(newFile.cwd), expected.cwd);
+        Assert.equal(slash(newFile.base), expected.base);
 
         if (newFile.isStream()) {
             // Convert a stream into a buffer and test when it's done
