@@ -6,7 +6,7 @@
 
 'use strict';
 
-var Assert, css2js, defaultOptions, gulpUtil, stream, slash, fs, path;
+var Assert, css2js, defaultOptions, fs, gulpUtil, path, slash, stream;
 
 Assert = require('assert');
 css2js = require('../src/gulp-css2js');
