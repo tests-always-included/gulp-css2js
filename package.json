@@ -24,7 +24,8 @@
         "through2": "*"
     },
     "devDependencies": {
-        "mocha": "*"
+        "mocha": "*",
+        "slash": "^1.0.0"
     },
     "license": "MIT",
     "engines": {
