@@ -1,0 +1,7 @@
+assets/
+src/
+test/
+.babelrc
+.editorconfig
+.gitignore
+.travis.yml
