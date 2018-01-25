@@ -41,6 +41,6 @@
     "scripts": {
         "test": "mocha --require @babel/register",
         "build": "rimraf dist && babel src --out-dir dist",
-        "prepublish": "npm run build"
+        "prepare": "npm run build"
     }
 }
