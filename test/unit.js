@@ -13,8 +13,11 @@ css2js = require('../');
 defaultOptions = JSON.parse(JSON.stringify(css2js.defaultOptions));
 gulpUtil = require('gulp-util');
 stream = require('stream');
-// The 'slash' package is used to normalize paths in respect to OS/environment...
-//   e.g. change '.\\foo\\bar' (Windows path) to the expected './foo/bar' (*nix path)
+
+/* The 'slash' package is used to normalize paths in respect to OS/environment.
+ * e.g. change '.\\foo\\bar' (Windows path) to the expected './foo/bar'
+ * (*nix path)
+ */
 slash = require('slash');
 
 function runThroughStream(expected, srcFile, options, done) {
