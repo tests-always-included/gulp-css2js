@@ -9,7 +9,7 @@
 var Assert, css2js, defaultOptions, gulpUtil, stream, slash;
 
 Assert = require('assert');
-css2js = require('../');
+css2js = require('../src/gulp-css2js');
 defaultOptions = JSON.parse(JSON.stringify(css2js.defaultOptions));
 gulpUtil = require('gulp-util');
 stream = require('stream');

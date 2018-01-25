@@ -26,3 +26,4 @@ nbproject/
 
 # Generated
 /node_modules/
+dist/

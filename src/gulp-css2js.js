@@ -13,7 +13,7 @@
 (function () {
     'use strict';
 
-    var defaultOptions, gulpUtil, through2;
+    var defaultOptions, gulpUtil, through2, defaultWrapper;
 
     /**
      * @typedef {Object} gulpCss2js~options
@@ -201,24 +201,23 @@
         });
     };
 
+    /* The following `preval` expression is evaluated and replaced at build-time.
+     * (For more on that, see https://github.com/kentcdodds/babel-plugin-preval)
+     * See assets/defaultWrapper.js for the unminified version of `defaultWrapper`.
+     */
+    defaultWrapper = preval`
+        const fs = require('fs');
+        const path = require('path');
+        const uglifyJs = require('uglify-js');
+        const prettyWrapper = fs.readFileSync(path.join(__dirname, '../assets/defaultWrapper.js'), 'utf8');
+        const uglyWrapper = uglifyJs.minify(prettyWrapper).code;
+        module.exports = uglyWrapper.split('$$$');
+    `;
+
     module.exports.defaultOptions = defaultOptions = {
-        prefix: '(function (doc, cssText) {\n' +
-            '    var styleEl = doc.createElement("style");\n' +
-            '    doc.getElementsByTagName("head")[0].appendChild(styleEl);\n' +
-            '    if (styleEl.styleSheet) {\n' +
-            '        if (!styleEl.styleSheet.disabled) {\n' +
-            '            styleEl.styleSheet.cssText = cssText;\n' +
-            '        }\n' +
-            '    } else {\n' +
-            '        try {\n' +
-            '            styleEl.innerHTML = cssText;\n' +
-            '        } catch (ignore) {\n' +
-            '            styleEl.innerText = cssText;\n' +
-            '        }\n' +
-            '    }\n' +
-            '}(document, "',
+        prefix: defaultWrapper[0],
+        suffix: defaultWrapper[1],
         splitOnNewline: true,
-        suffix: '"));\n',
         trimSpacesBeforeNewline: true,
         trimTrailingNewline: true
     };
