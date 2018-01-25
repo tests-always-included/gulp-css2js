@@ -6,7 +6,7 @@
 
 'use strict';
 
-var Assert, css2js, defaultOptions, gulpUtil, stream, slash;
+var Assert, css2js, defaultOptions, gulpUtil, stream, slash, fs, path;
 
 Assert = require('assert');
 css2js = require('../src/gulp-css2js');
@@ -16,6 +16,8 @@ stream = require('stream');
 // The 'slash' package is used to normalize paths in respect to OS/environment...
 //   e.g. change '.\\foo\\bar' (Windows path) to the expected './foo/bar' (*nix path)
 slash = require('slash');
+fs = require('fs');
+path = require('path');
 
 function runThroughStream(expected, srcFile, options, done) {
     var stream;
@@ -258,6 +260,16 @@ describe('gulp-css2js', function () {
                     }, done);
                 });
             });
+            describe('default wrapper', function () {
+                it('is minified', function () {
+                    var originalWrapper, effectiveWrapper;
+
+                    originalWrapper = fs.readFileSync(path.join(__dirname, '../assets/defaultWrapper.js'), 'utf8');
+                    effectiveWrapper = css2js.defaultOptions.prefix + '$$$' + css2js.defaultOptions.suffix;
+
+                    Assert.ok(effectiveWrapper.length < originalWrapper.length / 2);
+                })
+            })
         });
     });
 });
