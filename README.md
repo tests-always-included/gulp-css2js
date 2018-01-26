@@ -44,7 +44,6 @@ css2js = require("gulp-css2js");
 cssmin = require("gulp-cssmin");
 gulp = require("gulp");
 less = require("gulp-less");
-uglify = require("gulp-uglify");
 
 // Load your CSS and LESS files
 gulp.src([
@@ -65,9 +64,6 @@ gulp.src([
     .pipe(css2js({
         splitOnNewline: false
     }))
-
-    // Minify the JavaScript
-    .pipe(uglify())
 
     // Finally write it to our destination (./build/styles.js)
     .pipe(gulp.dest("./build/"));
