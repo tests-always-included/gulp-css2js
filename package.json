@@ -1,6 +1,6 @@
 {
     "name": "gulp-css2js",
-    "version": "1.1.2",
+    "version": "1.2.0",
     "description": "Convert CSS into JavaScript.  Works with buffers and streams.",
     "author": "Tyler Akins <fidian@rumkin.com>",
     "homepage": "https://github.com/tests-always-included/gulp-css2js",
