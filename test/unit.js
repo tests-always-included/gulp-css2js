@@ -6,13 +6,13 @@
 
 'use strict';
 
-var Assert, css2js, defaultOptions, fs, gulpUtil, path, slash, stream;
+var Assert, css2js, defaultOptions, fs, Vinyl, path, slash, stream;
 
 Assert = require('assert');
 css2js = require('../src/gulp-css2js');
 defaultOptions = JSON.parse(JSON.stringify(css2js.defaultOptions));
-gulpUtil = require('gulp-util');
 stream = require('stream');
+Vinyl = require('vinyl');
 
 /* The 'slash' package is used to normalize paths in respect to OS/environment.
  * e.g. change '.\\foo\\bar' (Windows path) to the expected './foo/bar'
@@ -60,7 +60,7 @@ function makeFile(contents, path) {
         contents = new Buffer(contents, 'utf8');
     }
 
-    return new gulpUtil.File({
+    return new Vinyl({
         path: path || "test/styles/testing.css",
         cwd: "test/",
         base: "test",
@@ -100,15 +100,15 @@ describe('gulp-css2js', function () {
                 var sourceFile, streamChunks;
 
                 streamChunks = [].concat(actual);
-                sourceFile = makeFile('');
-                sourceFile.contents = new stream.Readable();
-                sourceFile.contents._read = function () {
+                let contents = new stream.Readable();
+                contents._read = function () {
                     if (streamChunks.length) {
                         this.push(new Buffer(streamChunks.shift(), 'utf8'), 'utf8');
                     } else {
                         this.push(null);
                     }
                 };
+                sourceFile = makeFile(contents)
                 runThroughStream(makeEncodedFile(expected), sourceFile, options, done);
             }
         }

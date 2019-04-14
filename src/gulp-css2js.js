@@ -13,7 +13,7 @@
 (function () {
     'use strict';
 
-    var defaultOptions, gulpUtil, through2, defaultWrapper;
+    var defaultOptions, through2, defaultWrapper, PluginError, replaceExt;
 
     /**
      * @typedef {Object} gulpCss2js~options
@@ -172,7 +172,8 @@
         return outStream;
     }
 
-    gulpUtil = require('gulp-util');
+    PluginError = require('plugin-error');
+    replaceExt = require('replace-ext');
     through2 = require('through2');
 
     module.exports = function (options) {
@@ -186,13 +187,13 @@
                     getRemainder(options),
                     new Buffer(options.suffix, 'utf8')
                 ]);
-                file.path = gulpUtil.replaceExtension(file.path, ".js");
+                file.path = replaceExt(file.path, ".js");
             } else if (file.isStream()) {
                 file.contents = file.contents.pipe(convertStream(options));
-                file.path = gulpUtil.replaceExtension(file.path, ".js");
+                file.path = replaceExt(file.path, ".js");
             } else if (!file.isNull()) {
                 // Not sure what this could be, but future-proofing the code.
-                this.emit('error', new gulpUtil.PluginError('gulp-css2js', 'Unhandled file source type.'));
+                this.emit('error', new PluginError('gulp-css2js', 'Unhandled file source type.'));
                 return callback();
             }
 
